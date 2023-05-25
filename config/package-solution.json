@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "updatedelete-client-side-solution",
+    "id": "904b460e-5deb-4528-91c2-44d0206ba08a",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.17.2"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "updatedelete description"
+      },
+      "longDescription": {
+        "default": "updatedelete description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "updatedelete Feature",
+        "description": "The feature that activates elements of the updatedelete solution.",
+        "id": "372ba214-ec85-47fc-9239-a7215ed66566",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/updatedelete.sppkg"
+  }
+}
