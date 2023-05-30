@@ -21,63 +21,46 @@ export default class HelloWorldWebPart extends BaseClientSideWebPart<IHelloWorld
   users: any[];
 
   public render(): void {
-  this.getUsers().then((users: any[]) => {
-    // amazena a lista de usuários
-    this.users = users;
-    const userListContainer = document.createElement('div');
-    userListContainer.classList.add('user-list');
+    console.log("get users");
+  this.getUsers()
+    .then((users: any[]) => {
+      this.users = users;
 
-    for (const user of users) {
-      const userContainer = document.createElement('div');
-      userContainer.classList.add('user-item');
+      const userListHtml = this.renderUserList(users);
 
-      const nameInput = document.createElement('input');
-      nameInput.type = 'text';
-      nameInput.value = user.Name;
-      userContainer.appendChild(nameInput);
+      this.domElement.innerHTML = `
+        <div class="${styles}"></div>
+        <div class="formulario">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+          <form></form>
+          ${userListHtml}
+        </div>
+      `;
 
-      const idInput = document.createElement('input');
-      idInput.type = 'text';
-      idInput.value = user.ID;
-      userContainer.appendChild(idInput);
-
-      const buttonsContainer = document.createElement('div');
-      buttonsContainer.classList.add('buttons-container');
-
-      const updateButton = document.createElement('button');
-      updateButton.type = 'button';
-      updateButton.innerHTML = '<i class="fas fa-pencil-alt"></i> Atualizar Aluno';
-      updateButton.addEventListener('click', () => {
-        this.updateUser(user.ID, nameInput.value);
+      const updateButtons = document.querySelectorAll('.update-button');
+      updateButtons.forEach((button, index) => {
+        button.addEventListener('click', () => {
+          this.updateUser(users[index].ID, users[index].Name);
+        });
       });
-      buttonsContainer.appendChild(updateButton);
 
-      const deleteButton = document.createElement('button');
-      deleteButton.type = 'button';
-      deleteButton.innerHTML = '<i class="fas fa-trash"></i> Remover Aluno';
-      deleteButton.addEventListener('click', () => {
-        this.deleteUser(user.ID);
+      const deleteButtons = document.querySelectorAll('.delete-button');
+      deleteButtons.forEach((button, index) => {
+        button.addEventListener('click', () => {
+          this.deleteUser(users[index].ID);
+        });
       });
-      buttonsContainer.appendChild(deleteButton);
 
-      userContainer.appendChild(buttonsContainer);
-      userListContainer.appendChild(userContainer);
-    }
-
-    this.domElement.appendChild(userListContainer);
-  }).catch((error: any) => {
-    console.log(error);
-  });
-    this.domElement.innerHTML = `
-    <div class="${styles}"></div>
-      <div class="formulario">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
-        <form>
-        </form>
-      </div>
-`;
-
-  }
+      const addButton = document.querySelector('.add-button');
+      addButton.addEventListener('click', () => {
+        const formAluno = `${this.context.pageContext.web.absoluteUrl}/SitePages/CRUD-PnP---Finalizado.aspx`;
+        window.location.href = formAluno;
+      });
+    })
+    .catch((error: any) => {
+      console.log(error);
+    });
+}
   private getUsers(): Promise<any[]> {
     const endpoint = `${this.context.pageContext.web.absoluteUrl}/_api/web/lists/getByTitle('Students')/items?$select=ID,Name`;
     
@@ -111,6 +94,7 @@ export default class HelloWorldWebPart extends BaseClientSideWebPart<IHelloWorld
       alert('Usuário atualizado!')
       console.log('Usuário atualizado com sucesso');
     } else {
+      alert("erro")
       console.log('Erro ao atualizar usuário');
     }
   }).catch((error: any) => {
@@ -131,15 +115,57 @@ private deleteUser(userId: number): void {
       alert('Usuário Excluído')
       console.log('Usuário excluído com sucesso');
     } else {
+      alert("erro")
       console.log('Erro ao excluir usuário');
     }
   }).catch((error: any) => {
     console.log(error);
   });
 }
+private renderUserList(users: any[]): string {
+  let userListHtml = '';
 
+  userListHtml += `
+    <div class="user-list">
+      <table class="table-format">
+        <tr>
+          <th>Name</th>
+          <th>ID</th>
+          <th>Ações</th>
+        </tr>
+  `;
 
+  for (const user of users) {
+    userListHtml += `
+      <tr>
+        <td>${user.Name}</td>
+        <td>${user.ID}</td>
+        <td>
+          <button type="button" class="custom-button update-button">
+            <i class="fas fa-pencil-alt"></i>
+          </button>
+          <button type="button" class="custom-button delete-button">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
+      </tr>
+    `;
+  }
 
+  userListHtml += `
+      <tr>
+        <td colspan="3">
+          <button type="button" class="custom-button add-button">
+            <i class="fas fa-plus"></i> Cadastrar Aluno
+          </button>
+        </td>
+      </tr>
+    </table>
+  </div>
+  `;
+
+  return userListHtml;
+}
 
   protected get dataVersion(): Version {
     return Version.parse('1.0');
